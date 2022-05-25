@@ -12,7 +12,7 @@
 # CBL-Mariner is designed to provide a consistent platform for these devices and services and will enhance Microsoft’s
 # ability to stay current on Linux updates.
 # https://github.com/microsoft/CBL-Mariner
-FROM mcr.microsoft.com/cbl-mariner/base/core:1.0
+FROM mcr.microsoft.com/cbl-mariner/base/core:2.0
 
 SHELL ["/bin/bash","-c"]
 
@@ -26,21 +26,21 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
   mariner-repos-microsoft-preview
 
 RUN tdnf update -y && bash ./tdnfinstall.sh \
-  apt-transport-https \
   curl \
-  xz-utils \
   git \
-  gpg \
-  locales \
   wget \
   zip \
   zsh \
   python3 \
   python3-pip \
   jq \
+  sed \
+  tar \
+  which \
   ca-certificates
 
 RUN tdnf update -y && bash ./tdnfinstall.sh \
+  shadow-utils \
   nodejs \
   azure-cli
 
@@ -56,8 +56,21 @@ RUN export INSTALL_DIRECTORY="$GOROOT/bin" \
   && ln -sf INSTALL_DIRECTORY/dep /usr/bin/dep \
   && unset INSTALL_DIRECTORY
 
-RUN bash ./tdnfinstall.sh \
-  powershell
+# RUN tdnf -y install mariner-repos-preview
+
+# RUN bash ./tdnfinstall.sh \
+#   powershell
+
+# RUN tdnf -y remove mariner-repos-preview
+
+RUN tdnf update -y && bash ./tdnfinstall.sh \
+  dotnet-sdk-6.0 
+
+RUN curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v7.2.3/powershell-7.2.3-linux-x64.tar.gz \
+  && mkdir -p /opt/microsoft/powershell/7 \
+  && tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
+  && chmod +x /opt/microsoft/powershell/7/pwsh \
+  && ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh
 
 # PowerShell telemetry
 ENV POWERSHELL_DISTRIBUTION_CHANNEL CloudShell
