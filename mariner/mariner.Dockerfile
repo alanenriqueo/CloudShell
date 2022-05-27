@@ -42,7 +42,8 @@ RUN tdnf update -y && bash ./tdnfinstall.sh \
 RUN tdnf update -y && bash ./tdnfinstall.sh \
   shadow-utils \
   nodejs \
-  azure-cli
+  azure-cli \
+  diffutils
 
 
 RUN bash ./tdnfinstall.sh \
